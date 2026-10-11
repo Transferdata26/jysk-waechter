@@ -1,0 +1,35 @@
+name: JYSK-Wächter
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Probealarm senden"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: waechter
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verfügbarkeit prüfen
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          WAECHTER_TEST: ${{ inputs.test && '1' || '0' }}
+        run: python3 waechter.py
+      - name: Status speichern (nur bei Änderung)
+        run: |
+          git config user.name "jysk-waechter"
+          git config user.email "jysk-waechter@users.noreply.github.com"
+          git add status.json
+          git diff --cached --quiet || (git commit -m "Status aktualisiert" && git push)
