@@ -31,5 +31,5 @@ jobs:
         run: |
           git config user.name "jysk-waechter"
           git config user.email "jysk-waechter@users.noreply.github.com"
-          git add status.json
+          git add status.json aktualisierungen.csv
           git diff --cached --quiet || (git commit -m "Status aktualisiert" && git push)

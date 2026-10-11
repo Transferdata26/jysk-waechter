@@ -13,8 +13,9 @@ import json
 import os
 import subprocess
 import sys
-import time
 import urllib.request
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 ARTICLE_ID = "3650325"
@@ -30,11 +31,14 @@ _topic_file = HERE / "ntfy_topic.txt"
 NTFY_TOPIC = os.environ.get("NTFY_TOPIC") or (_topic_file.read_text().strip() if _topic_file.exists() else "")
 STATE_FILE = HERE / "status.json"
 LOG_FILE = HERE / "waechter.log"
+# Wird mit ins Repo übernommen: eine Zeile pro Datenaktualisierung bei JYSK
+UPDATES_FILE = HERE / "aktualisierungen.csv"
+BERLIN = ZoneInfo("Europe/Berlin")
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/128 Safari/537.36"
 
 
 def log(msg):
-    line = f"{time.strftime('%Y-%m-%d %H:%M:%S')}  {msg}"
+    line = f"{datetime.now(BERLIN):%Y-%m-%d %H:%M:%S}  {msg}"
     print(line)
     with LOG_FILE.open("a") as f:
         f.write(line + "\n")
@@ -47,7 +51,24 @@ def check():
     online = data["onlineAtp"]["dcAtp"]["quantity"]
     upcoming = data["onlineAtp"].get("nextAtp") or []
     stores = data["store"]["totalNumberStoresWithATP"]
-    return online, upcoming, stores
+    stamp = data["onlineAtp"]["dcAtp"].get("timestamp", "")
+    return online, upcoming, stores, stamp
+
+
+def berlin(stamp):
+    """JYSK-Zeitstempel (UTC) in deutsche Ortszeit umrechnen."""
+    try:
+        return datetime.fromisoformat(stamp.replace("Z", "+00:00")).astimezone(BERLIN).strftime("%Y-%m-%d %H:%M:%S")
+    except ValueError:
+        return stamp or "?"
+
+
+def record_update(stamp, online, upcoming, stores):
+    if not UPDATES_FILE.exists():
+        UPDATES_FILE.write_text("jysk_stand;bemerkt_um;online;demnaechst;filialen\n")
+    with UPDATES_FILE.open("a") as f:
+        f.write(f"{berlin(stamp)};{datetime.now(BERLIN):%Y-%m-%d %H:%M:%S};{online};"
+                f"{json.dumps(upcoming, ensure_ascii=False)};{stores}\n")
 
 
 def notify_mac(title, text):
@@ -76,13 +97,17 @@ def main():
     state = json.loads(STATE_FILE.read_text()) if STATE_FILE.exists() else {"available": False}
 
     try:
-        online, upcoming, stores = (5, [], 0) if test else check()
+        online, upcoming, stores, stamp = (5, [], 0, "") if test else check()
     except Exception as e:
         log(f"Fehler beim Abruf: {e}")
         sys.exit(1)
 
     available = online > 0
-    log(f"online={online} demnächst={upcoming} filialen={stores}")
+    log(f"online={online} demnächst={upcoming} filialen={stores} jysk_stand={berlin(stamp)}")
+
+    if stamp and stamp != state.get("stamp"):
+        log(f"DATEN AKTUALISIERT: JYSK-Stand jetzt {berlin(stamp)} (vorher {berlin(state.get('stamp', ''))})")
+        record_update(stamp, online, upcoming, stores)
 
     if available and not state.get("available"):
         title = "REMMELS-Sessel ist da!" + (" (TEST)" if test else "")
@@ -100,7 +125,7 @@ def main():
         log("VORWARNUNG")
 
     if not test:
-        STATE_FILE.write_text(json.dumps({"available": available, "upcoming": bool(upcoming)}))
+        STATE_FILE.write_text(json.dumps({"available": available, "upcoming": bool(upcoming), "stamp": stamp}))
 
 
 if __name__ == "__main__":
