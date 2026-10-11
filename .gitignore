@@ -2,3 +2,5 @@ ntfy_topic.txt
 waechter.log
 fehler.log
 __pycache__/
+status-lokal.json
+aktualisierungen-lokal.csv
