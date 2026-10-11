@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Prüft, ob der Sessel REMMELS Zebra Stoff/Chrom bei JYSK online bestellbar ist,
-getrennt für jysk.de, jysk.at und jysk.nl (jeweils eigener Bestand).
+getrennt für jysk.de, jysk.at, jysk.nl und jysk.ch (jeweils eigener Bestand).
 
 Sobald er in einem Land verfügbar wird:
   1. macOS-Mitteilung mit Ton
@@ -38,6 +38,13 @@ SHOPS = {
         "article": "3650325",
         "url": "https://jysk.nl/woonkamer/fauteuils/fauteuil-remmels-zebra-stof-chroom",
         "atp": "https://jysk.nl/websapapi/api/v2/atp/onlineWithStoreStatus/1009"
+               "?articleIds=3650325&atpType=ONLINE",
+    },
+    "CH": {
+        "name": "jysk.ch",
+        "article": "3650325",
+        "url": "https://jysk.ch/de/wohnzimmer/sessel/sessel-remmels-zebra-stoff-chrom",
+        "atp": "https://jysk.ch/websapapi/api/v2/atp/onlineWithStoreStatus/1025"
                "?articleIds=3650325&atpType=ONLINE",
     },
 }
