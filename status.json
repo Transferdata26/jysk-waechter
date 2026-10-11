@@ -1,1 +1,17 @@
-{"available": false, "upcoming": false, "stamp": "2026-10-11T04:00:38Z"}
+{
+ "DE": {
+  "available": false,
+  "upcoming": [],
+  "stamp": "2026-10-11T04:00:38Z"
+ },
+ "AT": {
+  "available": false,
+  "upcoming": [
+   {
+    "datum": "2026-10-29",
+    "menge": 100
+   }
+  ],
+  "stamp": "2026-10-11T20:34:32Z"
+ }
+}
