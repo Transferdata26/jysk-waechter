@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Prüft, ob der Sessel REMMELS Zebra Stoff/Chrom bei JYSK online bestellbar ist,
-getrennt für jysk.de und jysk.at (eigene Artikelnummer und eigener Bestand).
+getrennt für jysk.de, jysk.at und jysk.nl (jeweils eigener Bestand).
 
 Sobald er in einem Land verfügbar wird:
   1. macOS-Mitteilung mit Ton
@@ -21,15 +21,24 @@ from pathlib import Path
 
 SHOPS = {
     "DE": {
+        "name": "jysk.de",
         "article": "3650325",
         "url": "https://jysk.de/wohnzimmer/sessel/sessel-remmels-zebra-stoff-chrom",
         "atp": "https://jysk.de/websapapi/api/v2/atp/onlineWithStoreStatus/1023"
                "?articleIds=3650325&atpType=ONLINE",
     },
     "AT": {
+        "name": "jysk.at",
         "article": "3610119",
         "url": "https://jysk.at/wohnzimmer/sessel/sessel-remmels-zebra-stoff-chrom",
         "atp": "https://jysk.at/api/atp?productIds=3610119&storeId=",
+    },
+    "NL": {
+        "name": "jysk.nl",
+        "article": "3650325",
+        "url": "https://jysk.nl/woonkamer/fauteuils/fauteuil-remmels-zebra-stof-chroom",
+        "atp": "https://jysk.nl/websapapi/api/v2/atp/onlineWithStoreStatus/1009"
+               "?articleIds=3650325&atpType=ONLINE",
     },
 }
 
@@ -132,7 +141,7 @@ def watch(land, shop, prev, test):
         log(f"[{land}] DATEN AKTUALISIERT: JYSK-Stand jetzt {berlin(stamp)} (vorher {berlin(prev.get('stamp', ''))})")
         record_update(land, stamp, online, upcoming, stores)
 
-    shop_name = "jysk.de" if land == "DE" else "jysk.at"
+    shop_name = shop["name"]
     if available and not prev.get("available"):
         title = f"REMMELS-Sessel ist da! ({shop_name})" + (" TEST" if test else "")
         text = f"{online} Stück online bei {shop_name} verfügbar. Jetzt in den Warenkorb!"
