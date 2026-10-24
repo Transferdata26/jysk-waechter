@@ -157,15 +157,25 @@ def watch(land, shop, prev, test):
         if not IN_CLOUD:
             subprocess.run(["open", shop["url"]], check=False)
         log(f"[{land}] BENACHRICHTIGT")
-    elif upcoming and upcoming != prev.get("upcoming"):
-        # JYSK kennt (neuen) Liefertermin -> Vorwarnung
+    elif online < 0 and prev.get("online", 0) >= 0 and "online" in prev:
+        # Bestand rutscht ins Minus -> es wird gerade verkauft, evtl. war kurz Ware da
+        title = f"REMMELS: Es wird verkauft ({shop_name})"
+        text = f"Bestand bei {shop_name} gerade auf {online} gefallen. Jetzt die Seite prüfen!"
+        notify_mac(title, text)
+        notify_phone(title, text, shop["url"], priority=4)
+        log(f"[{land}] VERKAUF ERKANNT: Bestand {prev['online']} -> {online}")
+
+    # Vorwarnung nur bei neuem/geändertem Liefertermin, nicht bei reiner Mengenänderung
+    dates = sorted(u["datum"] for u in upcoming)
+    prev_dates = sorted(u["datum"] for u in prev.get("upcoming") or [])
+    if not available and dates and dates != prev_dates:
         termine = ", ".join(f"{u['menge']} Stk. ab {u['datum']}" for u in upcoming)
-        title = f"REMMELS: Nachschub angekündigt ({shop_name})"
+        title = f"REMMELS: Liefertermin ({shop_name})"
         notify_mac(title, termine)
         notify_phone(title, termine, shop["url"], priority=3)
         log(f"[{land}] VORWARNUNG: {termine}")
 
-    return {"available": available, "upcoming": upcoming, "stamp": stamp}
+    return {"available": available, "upcoming": upcoming, "stamp": stamp, "online": online}
 
 
 def main():
