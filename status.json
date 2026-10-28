@@ -10,10 +10,10 @@
   "upcoming": [
    {
     "datum": "2026-11-25",
-    "menge": 96
+    "menge": 100
    }
   ],
-  "stamp": "2026-10-27T19:17:24Z",
+  "stamp": "2026-10-28T01:45:02Z",
   "online": 0
  },
  "NL": {
@@ -24,13 +24,13 @@
     "menge": 333
    }
   ],
-  "stamp": "2026-10-27T22:44:26Z",
-  "online": -10
+  "stamp": "2026-10-28T00:19:18Z",
+  "online": -6
  },
  "CH": {
   "available": false,
   "upcoming": [],
-  "stamp": "2026-10-27T21:21:40Z",
+  "stamp": "2026-10-28T01:30:29Z",
   "online": 0
  }
 }
