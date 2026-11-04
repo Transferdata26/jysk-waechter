@@ -2,7 +2,7 @@
  "DE": {
   "available": false,
   "upcoming": [],
-  "stamp": "2026-11-04T14:37:58Z",
+  "stamp": "2026-11-04T16:45:21Z",
   "online": -1
  },
  "AT": {
@@ -13,18 +13,18 @@
     "menge": 95
    }
   ],
-  "stamp": "2026-11-04T13:54:45Z",
-  "online": -1
+  "stamp": "2026-11-04T20:37:00Z",
+  "online": 0
  },
  "NL": {
   "available": false,
   "upcoming": [
    {
     "datum": "2026-11-20",
-    "menge": 181
+    "menge": 205
    }
   ],
-  "stamp": "2026-11-04T14:45:39Z",
+  "stamp": "2026-11-04T20:04:35Z",
   "online": -18
  },
  "CH": {
