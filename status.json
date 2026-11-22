@@ -18,7 +18,7 @@
     "menge": 91
    }
   ],
-  "stamp": "2026-11-22T08:23:34Z",
+  "stamp": "2026-11-22T16:34:38Z",
   "online": 0
  },
  "NL": {
@@ -26,11 +26,11 @@
   "upcoming": [
    {
     "datum": "2026-11-27",
-    "menge": 718
+    "menge": 724
    }
   ],
-  "stamp": "2026-11-22T08:46:35Z",
-  "online": 0
+  "stamp": "2026-11-22T16:13:21Z",
+  "online": -1
  },
  "CH": {
   "available": false,
